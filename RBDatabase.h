@@ -27,13 +27,15 @@ public:
   int GetMenuInput(const string initialMessage, const int numMenuOptions);
   int GetValueFromUser(const string initialMessage);
 
+
+private:
   void AddToTree();
   void RemoveFromTree();
   void SearchTree();
   void PrintTree();
   void FindMaxVal();
   void FindMinVal();
-private:
+
   RBtree<int> tree;
 
 };

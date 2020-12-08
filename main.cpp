@@ -15,30 +15,7 @@ int main()
 
 	myDB.RunDatabase();
 
-
-
-
-
-/*
-	myTree.Insert(6);
-	myTree.PrintAllTraversals();
-
-
-	myTree.Insert(2);
-	myTree.PrintAllTraversals();
-
-	myTree.Insert(9);
-	myTree.PrintAllTraversals();
-
-	myTree.Insert(17);
-	myTree.PrintAllTraversals();
-
-	myTree.Insert(24);
-	myTree.PrintAllTraversals();
-*/
-	//myTree.RemoveNode
-
-	cout << "\n\nProgram Finished\n\n";
+	cout << "\n\nProgram Finished Executing\n\n";
 
 	return 0;
 }
