@@ -124,7 +124,7 @@ public:
 	                }
 
 	                RotateRight(nodeGrandParent);
-	                SwapColors(nodeParent, nodeGrandParent);
+	                ExchangeColors(nodeParent, nodeGrandParent);
 	                node = nodeParent;
 	            }
 	        }
@@ -149,21 +149,13 @@ public:
 	                }
 
 	                RotateLeft(nodeGrandParent);
-	                SwapColors(nodeParent, nodeGrandParent);
+	                ExchangeColors(nodeParent, nodeGrandParent);
 	                node = nodeParent;
 	            }
 	        }
 	    }
 
 	    root -> color = BLACK;
-	}
-
-
-	void SwapColors(TreeNode<x>* node1, TreeNode<x>* node2)
-	{
-		Color tempColor = node1 -> color;
-		node1 -> color = node2 -> color;
-		node2 -> color = tempColor;
 	}
 
 	void RotateLeft(TreeNode<x>* &point)
@@ -631,6 +623,7 @@ public:
 
 	void FixBlackBlack(TreeNode<x>* node)
 	{
+		//**************************************************************************************
 
 	}
 
