@@ -35,7 +35,7 @@ public:
 		}
 	}
 
-	void moveDown(TreeNode<x>* node)
+	void MoveDown(TreeNode<x>* node)
 	{
 		if (parent != NULL)
 		{
@@ -54,7 +54,6 @@ public:
 
 	bool HasRedChild()
 	{
-		cerr << "TEEEEEEEEEEEEEEEEEEESHIrt\n";
 		if((left != nullptr && left -> color == RED) || (right != nullptr && right -> color == RED))
 		{
 			return true;
