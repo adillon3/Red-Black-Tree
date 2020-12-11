@@ -845,11 +845,6 @@ private:
 		}
 	}
 
-	void Restructure(TreeNode<x>* temp)
-	{
-		FixViolation(root);
-	}
-
 	void Recolor(TreeNode<x>* temp)
 	{
 		if(temp -> color == RED)
