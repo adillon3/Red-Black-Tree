@@ -499,8 +499,6 @@ private:
 		}
 	}
 
-
-
 	void FixRedRed(TreeNode<x>* node)
 	{
 		//Root must always be black
@@ -591,7 +589,7 @@ private:
 		}
 	}
 
-	void FixViolation(TreeNode<x>* &node)
+	void FixViolation(TreeNode<x>* node)
 	{
     TreeNode<x>* nodeParent = nullptr;
     TreeNode<x>* nodeGrandParent = nullptr;
@@ -680,7 +678,7 @@ private:
 		}
 	}
 
-	void RotateLeft(TreeNode<x>* &point)
+	void RotateLeft(TreeNode<x>* point)
 	{
 		TreeNode<x>* rightPointer = point -> right;
 
@@ -710,7 +708,7 @@ private:
 	    point -> parent = rightPointer;
 	}
 
-	void RotateRight(TreeNode<x>* &point)
+	void RotateRight(TreeNode<x>* point)
 	{
 		TreeNode<x>* leftPointer = point -> left;
 
@@ -752,7 +750,7 @@ private:
 		return node;
 	}
 
-	void PreOrderHelper(TreeNode<x>* subRoot)
+	void PreOrderHelper(const TreeNode<x>* subRoot)
 	{
 		if(subRoot != nullptr)
 		{
@@ -777,7 +775,7 @@ private:
 			PreOrderHelper(subRoot -> right);
 		}
 	}
-	void PostOrderHelper(TreeNode<x>* subRoot)
+	void PostOrderHelper(const TreeNode<x>* subRoot)
 	{
 		if(subRoot != nullptr)
 		{
@@ -802,7 +800,7 @@ private:
 			}
 		}
 	}
-	void InOrderHelper(TreeNode<x>* subRoot)
+	void InOrderHelper(const TreeNode<x>* subRoot)
 	{
 		if(subRoot != nullptr)
 		{
