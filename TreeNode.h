@@ -23,6 +23,25 @@ template <class x>
 class TreeNode
 {
 public:
+	TreeNode()
+	{
+		this -> left = nullptr;
+		this -> right = nullptr;
+		this -> parent = nullptr;
+		this -> color = RED;
+	}
+
+	TreeNode(x newKey)
+	{
+		this -> key = newKey;
+		this -> left = nullptr;
+		this -> right = nullptr;
+		this -> parent = nullptr;
+		this -> color = RED;
+	}
+
+
+
 	bool IsOnLeft()
 	{
 		if(this -> parent != nullptr && this == this -> parent -> left)
@@ -53,9 +72,16 @@ public:
 		parent = node;
 	}
 
-	bool hasRedChild() {
-	return (left != NULL and left -> color == RED) or
-	   (right != NULL and right -> color == RED);
+	bool HasRedChild()
+	{
+		if((left != NULL && left -> color == RED) || (right != NULL && right -> color == RED))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	x key;

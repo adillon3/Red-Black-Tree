@@ -360,7 +360,7 @@ public:
 	        fixDoubleBlack(xNode);
 	      } else {
 	        // Sibling black
-	        if (sibling->hasRedChild()) {
+	        if (sibling->HasRedChild()) {
 	          // at least 1 red children
 	          if (sibling->left != NULL and sibling->left->color == RED) {
 	            if (IsOnLeft(sibling)) {
