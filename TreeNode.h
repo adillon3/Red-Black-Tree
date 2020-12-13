@@ -30,7 +30,6 @@ public:
 		this -> parent = nullptr;
 		this -> color = RED;
 	}
-
 	TreeNode(x newKey)
 	{
 		this -> key = newKey;
@@ -39,8 +38,6 @@ public:
 		this -> parent = nullptr;
 		this -> color = RED;
 	}
-
-
 	//Checks if the given node is a left child, retruns true if it is, returns false if it a right child or the root
 	bool IsOnLeft()
 	{
@@ -53,8 +50,6 @@ public:
 			return false;
 		}
 	}
-
-
 	void MoveDown(TreeNode<x>* node)
 	{
 		if (parent != NULL)
@@ -71,7 +66,6 @@ public:
 		node -> parent = parent;
 		parent = node;
 	}
-
 	bool HasRedChild()
 	{
 		if((left != NULL && left -> color == RED) || (right != NULL && right -> color == RED))
