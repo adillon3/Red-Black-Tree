@@ -228,7 +228,7 @@ public:
 			return;
 		}
 
-		TreeNode<x>* node = CreateNewNode(newValue);
+		TreeNode<x>* node = new TreeNode<x>(newValue);
 
     // Do a normal BST insert
     root = InsertRecursive(root, node);
@@ -754,17 +754,6 @@ public:
 		return temp;
 	}
 
-	TreeNode<x>* CreateNewNode(int newKey)
-	{
-		TreeNode<x>* node = new TreeNode<x>;
-		node -> key = newKey;
-		node -> left = nullptr;
-		node -> right = nullptr;
-		node -> parent = nullptr;
-		node -> color = RED;
-
-		return node;
-	}
 
 
 	/*********************
@@ -788,7 +777,6 @@ public:
 		cout << "\n\nPostorder\n";
 		PostOrderHelper(root);
 	}
-
 	void PreOrder()
 	{
 		cout << "Preorder:\n";
@@ -902,13 +890,7 @@ private:
 		}
 	}
 
-	void ExchangeColors(TreeNode<x>* node1, TreeNode<x>* node2)
-	{
-		Color temp;
-		temp = node1 -> color;
-		node1 -> color = node2 -> color;
-		node2 -> color = temp;
-	}
+
 
 	TreeNode<x>* SingleRightRotation(TreeNode<x>* temp)
 	{
@@ -939,7 +921,13 @@ private:
 		return temp;
 	}
 
-
+	void ExchangeColors(TreeNode<x>* node1, TreeNode<x>* node2)
+	{
+		Color temp;
+		temp = node1 -> color;
+		node1 -> color = node2 -> color;
+		node2 -> color = temp;
+	}
 	void Recolor(TreeNode<x>* temp)
 	{
 		if(temp -> color == RED)
