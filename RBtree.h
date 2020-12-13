@@ -16,7 +16,6 @@ class RBtree
 public:
 	RBtree()
 	{
-		cout << "TEST\n";
 		root = nullptr;
 		numNodes = 0;
 	}
@@ -444,7 +443,7 @@ public:
 			    if (xNode == root)
 			      root = nParent;
 
-			    xNode->moveDown(nParent);
+			    xNode->MoveDown(nParent);
 
 			    // connect x with new parent's left element
 			    xNode->right = nParent->left;
@@ -465,7 +464,7 @@ public:
 			    if (xNode == root)
 			      root = nParent;
 
-			    xNode->moveDown(nParent);
+			    xNode->MoveDown(nParent);
 
 			    // connect x with new parent's right element
 			    xNode->left = nParent->right;

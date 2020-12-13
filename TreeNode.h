@@ -23,27 +23,39 @@ template <class x>
 class TreeNode
 {
 public:
-	bool isOnLeft()
+	bool IsOnLeft()
 	{
-		return this == parent->left;
+		if(this -> parent != nullptr && this == this -> parent -> left)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 
-	void moveDown(TreeNode<x>* nParent) {
-	if (parent != NULL) {
-	if (isOnLeft()) {
-	parent->left = nParent;
-	} else {
-	parent->right = nParent;
-	}
-	}
-	nParent->parent = parent;
-	parent = nParent;
+	void MoveDown(TreeNode<x>* node)
+	{
+		if (parent != NULL)
+		{
+			if (IsOnLeft())
+			{
+				parent -> left = node;
+			}
+			else
+			{
+				parent -> right = node;
+			}
+		}
+		node -> parent = parent;
+		parent = node;
 	}
 
 	bool hasRedChild() {
-	return (left != NULL and left->color == RED) or
-	   (right != NULL and right->color == RED);
+	return (left != NULL and left -> color == RED) or
+	   (right != NULL and right -> color == RED);
 	}
 
 	x key;
