@@ -62,8 +62,8 @@ public:
 	/****************
 	 * CORE METHODS *
 	 ****************/
-	// Function to insert a new node with given value
-	void Insert(const int &newValue)
+	//public method to insert a new node with given value
+	void Insert(const int newValue)
 	{
 		if(SearchNode(newValue) != nullptr)
 		{
@@ -71,7 +71,7 @@ public:
 			return;
 		}
 
-		TreeNode<x>* node = CreateNewNode(newValue);
+		TreeNode<x>* node = new TreeNode<x>(newValue);
 
     //Recursivly inserting node and telling user its been added
     root = InsertRecursive(root, node);
@@ -80,8 +80,7 @@ public:
     // fix Red Black Tree violations
     FixViolation(node);
 	}
-
-	//public delate method
+	//public method to delete a node with given value
 	void Delete(x value)
 	{
 		if(IsEmpty())
@@ -103,7 +102,7 @@ public:
 		//Delteting node if found
 		DeleteNode(deleteToNode);
 	}
-
+	//Returns pointer to given node
 	TreeNode<x>* SearchNode(x value)
   {
 		//Can't find node if no nodes to look through
@@ -131,7 +130,7 @@ public:
 		//Mode found, or returning nullptr
     return current;
   }
-
+	//Returns max value
 	x GetMax()
 	{
 		if(IsEmpty())
@@ -148,7 +147,7 @@ public:
 
 		return temp -> key;
 	}
-
+	//returs minimum value
 	x GetMin()
 	{
 		if(IsEmpty())
@@ -165,7 +164,6 @@ public:
 
 		return temp -> key;
 	}
-
 	bool IsEmpty()
 	{
 		if(root == nullptr)
@@ -248,6 +246,9 @@ private:
 	/*******************
 	 * PRIVATE METHODS *
 	 *******************/
+
+	//This method palcces the new value as a new leaf node,
+	// restructuring of the tree will occur in the FixViolation() method
 	TreeNode<x>* InsertRecursive(TreeNode<x>* subroot, TreeNode<x>* newNode)
 	{
 		//reached apporpriate leave of the tree
@@ -256,16 +257,18 @@ private:
 			return newNode;
 		}
 
+		//moving left or right, to find the appropriate insert spot (leaf node)
 		if(newNode -> key < subroot -> key)
 		{
 			subroot -> left = InsertRecursive(subroot -> left, newNode);
-			subroot -> left -> parent = subroot;
+			newNode -> parent = subroot;
 		}
 		else if(newNode -> key > subroot -> key)
 		{
 			subroot -> right = InsertRecursive(subroot -> right, newNode);
-			subroot -> right -> parent = subroot;
+			newNode -> parent = subroot;
 		}
+		//The new value is equal to one already in the tree and cannot be added twice
 		else
 		{
 			return nullptr;
@@ -274,9 +277,10 @@ private:
 		return subroot;
 	}
 
-	// deletes the given node
+	// Recursive method to delete the node from the tree
 	void DeleteNode(TreeNode<x>* nodeToDelete)
 	{
+		//Finding node to take nodeToDelete's place
 		TreeNode<x>* replacementNode = BSTreplace(nodeToDelete);
 
 		// True when nodeToDelete (dNode) and replacementNode(RNode) are both black
@@ -309,7 +313,7 @@ private:
 					}
 				}//END else of if(dNodeAndRNodeBlack)
 
-				// delete nodeToDelete from the tree
+				// removes nodeToDelete from the tree
 				if(nodeToDelete -> IsLeftChild())
 				{
 					parent -> left = nullptr;
@@ -355,7 +359,7 @@ private:
 				}
 				else
 				{
-					// u or nodeToDelete red, color u black
+					// replacementNode or nodeToDelete red, color replacementNode black ******************************************
 					replacementNode -> color = BLACK;
 				}//END else of if(dNodeAndRNodeBlack)
 			}//END else of if(nodeToDelete == root)
@@ -739,18 +743,8 @@ private:
 	    point -> parent = leftPointer;
 	}
 
-	TreeNode<x>* CreateNewNode(int newKey)
-	{
-		TreeNode<x>* node = new TreeNode<x>;
-		node -> key = newKey;
-		node -> left = nullptr;
-		node -> right = nullptr;
-		node -> parent = nullptr;
-		node -> color = RED;
 
-		return node;
-	}
-
+	//REcursivly prints pre order
 	void PreOrderHelper(const TreeNode<x>* subRoot)
 	{
 		if(subRoot != nullptr)
@@ -776,6 +770,7 @@ private:
 			PreOrderHelper(subRoot -> right);
 		}
 	}
+	//Recursivly prints post order
 	void PostOrderHelper(const TreeNode<x>* subRoot)
 	{
 		if(subRoot != nullptr)
@@ -801,6 +796,7 @@ private:
 			}
 		}
 	}
+	//Recursivly prints in order
 	void InOrderHelper(const TreeNode<x>* subRoot)
 	{
 		if(subRoot != nullptr)
@@ -826,6 +822,7 @@ private:
 		}
 	}
 
+	//Swaps the colors of the two given nodes
 	void ExchangeColors(TreeNode<x>* node1, TreeNode<x>* node2)
 	{
 		Color temp;
@@ -833,7 +830,7 @@ private:
 		node1 -> color = node2 -> color;
 		node2 -> color = temp;
 	}
-
+	//Returns a pointer to the sibling of the given node
 	TreeNode<x>* GetSibling(TreeNode<x>* node)
 	{
 		if(node -> IsLeftChild())
@@ -845,7 +842,7 @@ private:
 			return node -> parent -> left;
 		}
 	}
-
+	//Flips the color of the given node from RED to BLACK or from BLACK to RED
 	void Recolor(TreeNode<x>* temp)
 	{
 		if(temp -> color == RED)

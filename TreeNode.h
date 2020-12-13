@@ -23,6 +23,24 @@ template <class x>
 class TreeNode
 {
 public:
+
+	TreeNode()
+	{
+		left = nullptr;
+		right = nullptr;
+		parent = nullptr;
+		color = RED;
+	}
+
+	TreeNode(x newKey)
+	{
+		key = newKey;
+		left = nullptr;
+		right = nullptr;
+		parent = nullptr;
+		color = RED;
+	}
+
 	bool IsLeftChild()
 	{
 		if(this -> parent != nullptr && this == this -> parent -> left)
