@@ -528,36 +528,15 @@ public:
 
 
 
-	TreeNode<x>* GetSibling(TreeNode<x>* node)
-	{
-		if(node -> IsOnLeft())
-		{
-			return node -> parent -> right;
-		}
-		else //right is child
-		{
-			return node -> parent -> left;
-		}
-	}
 
-	TreeNode<x>* GetMinNode(TreeNode<x>* node)
-	{
-	 while (node -> left != nullptr)
-	 {
-		 node = node -> left;
-	 }
-	 return node;
- }
+
 
 	void TransplantNodes(TreeNode<x>* deleteNode, TreeNode<x>* replacementNode)
 	{
-		cerr << "void TransplantNodes(TreeNode<x>* deleteNode, TreeNode<x>* replacementNode)\n";
 
 		if(deleteNode -> parent == nullptr)
 		{
-			cerr << "if(deleteNode -> parent == nullptr)\n";
 			root = replacementNode;
-			cerr << "root = replacementNode;\n";
 		}
 		else if(deleteNode -> IsOnLeft())
 		{
@@ -566,39 +545,18 @@ public:
 		else
 		{
 			deleteNode -> parent -> right = replacementNode;
-			cerr << "deleteNode -> parent -> right = replacementNode;\n";
 		}
 
 		//If new node is null (we are deleting a leaf node)
 		if(replacementNode != nullptr)
 		{
 			replacementNode -> parent = deleteNode -> parent;
-			cerr << "replacementNode -> parent = deleteNode -> parent;\n";
 		}
 
 	}
 
 
-	TreeNode<x>* GetSuccessor(TreeNode<x>* nodeToDelete)//helper function for delete.  d is node to delete
-	{
-		 TreeNode<x>* sp = nodeToDelete;
-		 TreeNode<x>* successor = nodeToDelete;
-		 TreeNode<x>* current = nodeToDelete -> right;
 
-		 while(current != nullptr)
-		 {
-			 sp = successor;
-			 successor = current;
-			 current = current -> left;
-		 }
-
-		 if(successor != nodeToDelete -> right)
-		 {
-			 sp -> left = successor -> right;
-			 successor -> right = nodeToDelete -> right;
-		 }
-		 return successor;
-	}
 
 
 
@@ -627,7 +585,6 @@ public:
 	    return current;
     }//END else of if(IsEmpty())
   }
-
 	x  GetMax()
 	{
 		if(IsEmpty())
@@ -659,7 +616,6 @@ public:
 
 		return temp -> key;
 	}
-
 	bool IsEmpty()
 	{
 		if(root == nullptr)
@@ -672,75 +628,8 @@ public:
 		}
 	}
 
-	void FixRedRed(TreeNode<x>* node)
-	{
-	    if (node == root)
-	    {
-	      node -> color = BLACK;
-	      return;
-	    }
 
-	    TreeNode<x>* parent = node -> parent;
-	    TreeNode<x>* grandparent = parent -> parent;
-	    TreeNode<x>* aunt;
 
-	    if(grandparent -> left == parent)
-	    {
-	    	aunt = grandparent -> right;
-	    }
-	    else
-	    {
-	    	aunt = grandparent -> left;
-	    }
-
-		if (parent -> color != BLACK)
-		{
-			if(aunt != NULL && aunt -> color == RED)
-			{
-				parent -> color = BLACK;
-				aunt -> color = BLACK;
-				grandparent -> color = RED;
-				FixRedRed(grandparent);
-			}
-			else
-			{
-				if(parent -> parent -> left == parent)
-				{
-					if(node -> parent -> left == node)
-					{
-						ExchangeColors(parent, grandparent);
-					}
-					else
-					{
-						SingleLeftRotation(parent);
-						ExchangeColors(node, grandparent);
-					}
-
-					SingleRightRotation(grandparent);
-				}
-				else
-				{
-					if(node -> parent -> left == node)
-					{
-						SingleRightRotation(parent);
-						ExchangeColors(node, grandparent);
-					}
-					else
-					{
-						ExchangeColors(parent, grandparent);
-					}
-
-					SingleLeftRotation(grandparent);
-				}//END else of if(parent -> parent -> left == parent)
-			}//END else of if(aunt != NULL && aunt -> color == RED)
-		}//END if (parent -> color != BLACK)
-	}
-
-	void FixBlackBlack(TreeNode<x>* node)
-	{
-		//**************************************************************************************
-
-	}
 
 	TreeNode<x>* Successor(TreeNode<x>* node)
 	{
@@ -890,7 +779,82 @@ private:
 		}
 	}
 
+	TreeNode<x>* GetSibling(TreeNode<x>* node)
+	{
+		if(node -> IsOnLeft())
+		{
+			return node -> parent -> right;
+		}
+		else //right is child
+		{
+			return node -> parent -> left;
+		}
+	}
 
+//**********************************************************************************************************8
+	void FixRedRed(TreeNode<x>* node)
+	{
+    if (node == root)
+    {
+      node -> color = BLACK;
+      return;
+    }
+
+    TreeNode<x>* parent = node -> parent;
+    TreeNode<x>* grandparent = parent -> parent;
+    TreeNode<x>* aunt;
+
+    if(grandparent -> left == parent)
+    {
+    	aunt = grandparent -> right;
+    }
+    else
+    {
+    	aunt = grandparent -> left;
+    }
+
+		if (parent -> color != BLACK)
+		{
+			if(aunt != NULL && aunt -> color == RED)
+			{
+				parent -> color = BLACK;
+				aunt -> color = BLACK;
+				grandparent -> color = RED;
+				FixRedRed(grandparent);
+			}
+			else
+			{
+				if(parent -> parent -> left == parent)
+				{
+					if(node -> parent -> left == node)
+					{
+						ExchangeColors(parent, grandparent);
+					}
+					else
+					{
+						SingleLeftRotation(parent);
+						ExchangeColors(node, grandparent);
+					}
+
+					SingleRightRotation(grandparent);
+				}
+				else
+				{
+					if(node -> parent -> left == node)
+					{
+						SingleRightRotation(parent);
+						ExchangeColors(node, grandparent);
+					}
+					else
+					{
+						ExchangeColors(parent, grandparent);
+					}
+
+					SingleLeftRotation(grandparent);
+				}//END else of if(parent -> parent -> left == parent)
+			}//END else of if(aunt != NULL && aunt -> color == RED)
+		}//END if (parent -> color != BLACK)
+	}
 
 	TreeNode<x>* SingleRightRotation(TreeNode<x>* temp)
 	{
