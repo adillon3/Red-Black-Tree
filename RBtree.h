@@ -661,28 +661,6 @@ private:
   	root -> color = BLACK;
 	}
 
-/*	void TransplantNodes(TreeNode<x>* deleteNode, TreeNode<x>* replacementNode)
-	{
-		if(deleteNode -> parent == nullptr)
-		{
-			root = replacementNode;
-		}
-		else if(deleteNode)
-		{
-			deleteNode -> parent -> left = replacementNode;
-		}
-		else
-		{
-			deleteNode -> parent -> right = replacementNode;
-		}
-
-		//ifnew node is nullptr (we are deleting a leaf node)
-		if(replacementNode != nullptr)
-		{
-			replacementNode -> parent = deleteNode -> parent;
-		}
-	}*/
-
 	void RotateLeft(TreeNode<x>* point)
 	{
 		TreeNode<x>* rightPointer = point -> right;
