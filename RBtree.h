@@ -294,7 +294,7 @@ public:
 	        }
 
 	        // delete v from the tree
-	        if (IsOnLeft(v)) {
+	        if (v -> IsOnLeft()) {
 	          parent -> left = NULL;
 	        } else {
 	          parent -> right = NULL;
@@ -313,7 +313,7 @@ public:
 	        delete u;
 	      } else {
 	        // Detach v from tree and move u up
-	        if (IsOnLeft(v)) {
+	        if (v -> IsOnLeft()) {
 	          parent -> left = u;
 	        } else {
 	          parent -> right = u;
@@ -350,7 +350,7 @@ public:
 	        // Sibling red
 	        parent -> color = RED;
 	        sibling -> color = BLACK;
-	        if (IsOnLeft(sibling)) {
+	        if (sibling -> IsOnLeft()) {
 	          // left case
 	          rightRotate(parent);
 	        } else {
@@ -363,7 +363,8 @@ public:
 	        if (sibling -> HasRedChild()) {
 	          // at least 1 red children
 	          if (sibling -> left != NULL and sibling -> left -> color == RED) {
-	            if (IsOnLeft(sibling)) {
+	            if (sibling -> IsOnLeft())
+							{
 	              // left left
 	              sibling -> left -> color = sibling -> color;
 	              sibling -> color = parent -> color;
@@ -375,7 +376,8 @@ public:
 	              leftRotate(parent);
 	            }
 	          } else {
-	            if (IsOnLeft(sibling)) {
+	            if (sibling -> IsOnLeft())
+							{
 	              // left right
 	              sibling -> right -> color = parent -> color;
 	              leftRotate(sibling);
@@ -525,132 +527,10 @@ public:
 
 
 
-/*
-
-
-	void DeleteHelper(TreeNode<x>* nodeToDelete)
-	{
-		cerr << "*void DeleteHelper(TreeNode<x>* nodeToDelete)\n";
-		//If only node in list
-		if(nodeToDelete == root && nodeToDelete -> left == nullptr && nodeToDelete -> right == nullptr)
-		{
-			cerr << "if(nodeToDelete == root && nodeToDelete -> left == nullptr && nodeToDelete -> right == nullptr)\n";
-			delete root;
-			root = nullptr;
-			return;
-		}
-
-		//Saving nodeToDelete's color, needed to know if we need to call DeleteFix
-		Color origrinalColor = nodeToDelete -> color;
-		TreeNode<x>* xNode = nullptr;
-		TreeNode<x>* yNode = nodeToDelete;
-
-
-		//Left child is null
-		if(nodeToDelete -> left == nullptr)
-		{
-			cerr << "if(nodeToDelete -> left == nullptr)\n";
-			xNode = nodeToDelete -> right;
-			cerr << "xNode = nodeToDelete -> right;\n";
-			TransplantNodes(nodeToDelete, xNode);
-			cerr << "TransplantNodes(nodeToDelete, xNode);\n";
-		}
-		else if(nodeToDelete -> right == nullptr)//****************************
-		{
-			cerr << "else if(nodeToDelete -> right == nullptr)\n";
-			xNode = nodeToDelete -> left;
-			cerr << "xNode = nodeToDelete -> left;\n";
-
-			TransplantNodes(nodeToDelete, xNode);
-			cerr << "TransplantNodes(nodeToDelete, xNode);\n";
-		}
-		else
-		{
-			yNode = GetMinNode(nodeToDelete -> right);
-      origrinalColor = yNode -> color;
-      xNode = yNode -> right;
-      if(yNode -> parent == nodeToDelete)
-			{
-        xNode -> parent = yNode;
-      }
-			else
-			{
-        TransplantNodes(yNode, yNode -> right);
-        yNode -> right = nodeToDelete -> right;
-        yNode -> right -> parent = yNode;
-      }
-
-      TransplantNodes(nodeToDelete, yNode);
-      yNode -> left = nodeToDelete -> left;
-      yNode -> left -> parent = yNode;
-      yNode -> color = nodeToDelete -> color;
-
-		}//END else of if(nodeToDelete -> left == nullptr)
-
-		if(origrinalColor == BLACK)
-		{
-			cerr << "if(origrinalColor == BLACK)\n";
-			DeleteFix(xNode);
-		}
-
-	}
-
-	void DeleteFix(TreeNode<x>* node)
-	{
-		cerr << "void DeleteFix(TreeNode<x>* node)\n";
-		TreeNode<x>* wNode;
-
-		while(node != root && node -> color == BLACK)
-		{
-			cerr << "*while(node != root && node -> color != RED)\n";
-			//IS left child
-			if(IsOnLeft(node))//CASE 1
-			{
-				cerr << "**if(IsOnLeft(node))//CASE 1\n";
-				wNode = GetSibling(node);
-
-				if(wNode -> color == RED)
-				{
-					cerr << "***if(wNode -> color == RED)\n";
-					node -> parent -> right -> color = BLACK;
-					node -> parent -> color = RED;
-
-					RotateLeft(node -> parent);
-
-					node -> parent -> right = wNode;
-				}
-			}//END if(IsOnLeft(node)) is LEFT child
-			else if(wNode -> right -> color == BLACK && wNode -> left -> color == BLACK)//CASE 2
-			{
-				cerr << "**else if(wNode -> right -> color == BLACK && wNode -> left -> color == BLACK)//CASE 2\n";
-				wNode -> color = RED;
-				node = node -> parent;
-			}//END else if(wNode -> right -> color == BLACK && wNode -> left -> color == BLACK)//CASE 2
-			else if (wNode -> left -> color == BLACK)
-			{
-				cerr << "**else if (wNode -> left -> color == BLACK)\n";
-				wNode -> left -> color = BLACK;
-				wNode -> color = RED;
-
-				RotateRight(wNode);
-
-				wNode = node -> parent -> right;
-			}//else if (wNode -> left -> color == BLACK)
-			else
-			{
-				cerr << "**else\n";
-				wNode -> color = node -> color;
-				node -> parent -> color = BLACK;
-				wNode -> left -> color = BLACK;
-				RotateRight(node -> parent);
-				node = root;
-			}//END else of if(IsOnLeft(node))//CASE 1
-		}//END while(node != root && node -> color != RED)
-	}*/
 
 	TreeNode<x>* GetSibling(TreeNode<x>* node)
 	{
-		if(IsOnLeft(node))
+		if(node -> IsOnLeft())
 		{
 			return node -> parent -> right;
 		}
@@ -679,15 +559,12 @@ public:
 			root = replacementNode;
 			cerr << "root = replacementNode;\n";
 		}
-		else if(IsOnLeft(deleteNode))//******************************************
+		else if(deleteNode -> IsOnLeft())
 		{
-			cerr << "else if(IsOnLeft(deleteNode))\n";
 			deleteNode -> parent -> left = replacementNode;
-			cerr << "deleteNode -> parent -> left = replacementNode;\n";
 		}
 		else
 		{
-			cerr << "else\n";
 			deleteNode -> parent -> right = replacementNode;
 			cerr << "deleteNode -> parent -> right = replacementNode;\n";
 		}
@@ -723,18 +600,8 @@ public:
 		 return successor;
 	}
 
-	//Checks if the given node is a left child, retruns true if it is, returns false if it a right child or the root
-	bool IsOnLeft(TreeNode<x>* node)
-	{
-		if(node -> parent != nullptr && node == node -> parent -> left)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
+
+
 
 	TreeNode<x>* SearchNode(x value)
   {

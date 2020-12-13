@@ -41,7 +41,7 @@ public:
 	}
 
 
-
+	//Checks if the given node is a left child, retruns true if it is, returns false if it a right child or the root
 	bool IsOnLeft()
 	{
 		if(this -> parent != nullptr && this == this -> parent -> left)
