@@ -661,7 +661,7 @@ private:
   	root -> color = BLACK;
 	}
 
-	void TransplantNodes(TreeNode<x>* deleteNode, TreeNode<x>* replacementNode)
+/*	void TransplantNodes(TreeNode<x>* deleteNode, TreeNode<x>* replacementNode)
 	{
 		if(deleteNode -> parent == nullptr)
 		{
@@ -681,7 +681,7 @@ private:
 		{
 			replacementNode -> parent = deleteNode -> parent;
 		}
-	}
+	}*/
 
 	void RotateLeft(TreeNode<x>* point)
 	{
