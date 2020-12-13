@@ -251,7 +251,7 @@ private:
 	// restructuring of the tree will occur in the FixViolation() method
 	TreeNode<x>* InsertRecursive(TreeNode<x>* subroot, TreeNode<x>* newNode)
 	{
-		//reached apporpriate leave of the tree
+		//reached apporpriate leaf of the tree
 		if(subroot == nullptr)
 		{
 			return newNode;
@@ -398,12 +398,12 @@ private:
 				if(sibling -> IsLeftChild())
 				{
 					// left case
-					RotateRight(parent);
+					//RotateRight(parent);
 				}//END if(sibling -> IsLeftChild())
 				else
 				{
 					// right case
-					RotateLeft(parent);
+					//RotateLeft(parent);
 					//leftRotate(parent);
 				}//END else of if(sibling -> IsLeftChild())
 
@@ -422,15 +422,15 @@ private:
 							// left left
 							sibling -> left -> color = sibling -> color;
 							sibling -> color = parent -> color;
-							RotateRight(parent);
+							//RotateRight(parent);
 						}
 						else
 						{
 							// right left
 							sibling -> left -> color = parent -> color;
-							RotateRight(sibling);
+							//RotateRight(sibling);
 							//leftRotate(parent);
-							RotateLeft(parent);
+							//RotateLeft(parent);
 						}//END else of if(sibling -> IsLeftChild())
 					}//END if(sibling -> left != nullptr and sibling -> left -> color == RED)
 					else
@@ -440,8 +440,8 @@ private:
 							// left right
 							sibling -> right -> color = parent -> color;
 							//leftRotate(sibling);
-							RotateLeft(sibling);
-							RotateRight(parent);
+							//RotateLeft(sibling);
+							//RotateRight(parent);
 						}
 						else
 						{
@@ -449,7 +449,7 @@ private:
 							sibling -> right -> color = sibling -> color;
 							sibling -> color = parent -> color;
 							//leftRotate(parent);
-							RotateLeft(parent);
+							//RotateLeft(parent);
 						}//END else of if(sibling -> IsLeftChild())
 					}//END else of if(sibling -> left != nullptr and sibling -> left -> color == RED)
 					parent -> color = BLACK;
@@ -594,6 +594,133 @@ private:
 		}
 	}
 
+
+
+
+
+	void FixViolation(TreeNode<x> *node)
+		{
+		    TreeNode<x> *nodeParent = nullptr;
+		    TreeNode<x> *nodeGrandParent = nullptr;
+
+
+
+		    while ((node != root) && (node -> color != BLACK) &&
+		           (node -> parent -> color == RED))
+		    {
+		    	nodeParent = node -> parent;
+		        nodeGrandParent = node -> parent -> parent;
+
+		        if (nodeParent == nodeGrandParent -> left)
+		        {
+
+		            TreeNode<x> *nodeAunt = nodeGrandParent -> right;
+
+		            if (nodeAunt != NULL && nodeAunt -> color == RED)
+		            {
+		                nodeGrandParent -> color = RED;
+		                nodeParent -> color = BLACK;
+		                nodeAunt -> color = BLACK;
+		                node = nodeGrandParent;
+		            }
+
+		            else
+		            {
+		            	if (node == nodeParent -> right)
+		                {
+		                    RotateLeft(root, nodeParent);
+		                    node = nodeParent;
+		                    nodeParent = node -> parent;
+		                }
+
+		                RotateRight(root, nodeGrandParent);
+		                swap(nodeParent -> color, nodeGrandParent -> color);
+		                node = nodeParent;
+		            }
+		        }
+		        else
+		        {
+		            TreeNode<x> *uncle_pt = nodeGrandParent -> left;
+
+		            if ((uncle_pt != NULL) && (uncle_pt -> color == RED))
+		            {
+		                nodeGrandParent -> color = RED;
+		                nodeParent -> color = BLACK;
+		                uncle_pt -> color = BLACK;
+		                node = nodeGrandParent;
+		            }
+		            else
+		            {
+		                if (node == nodeParent -> left)
+		                {
+		                    RotateRight(root, nodeParent);
+		                    node = nodeParent;
+		                    nodeParent = node -> parent;
+		                }
+
+		                RotateLeft(root, nodeGrandParent);
+		                swap(nodeParent -> color, nodeGrandParent -> color);
+		                node = nodeParent;
+		            }
+		        }
+		    }
+
+		    root->color = BLACK;
+		}
+
+
+
+
+		void RotateLeft(TreeNode<x> *root, TreeNode<x> *pt)
+			{
+				TreeNode<x> *pt_right = pt->right;
+
+			    pt->right = pt_right->left;
+
+			    if (pt->right != NULL)
+			        pt->right->parent = pt;
+
+			    pt_right->parent = pt->parent;
+
+			    if (pt->parent == NULL)
+			        root = pt_right;
+
+			    else if (pt == pt->parent->left)
+			        pt->parent->left = pt_right;
+
+			    else
+			        pt->parent->right = pt_right;
+
+			    pt_right->left = pt;
+			    pt->parent = pt_right;
+			}
+
+			void RotateRight(TreeNode<x> *root, TreeNode<x> *pt)
+			{
+				TreeNode<x> *pt_left = pt->left;
+
+			    pt->left = pt_left->right;
+
+			    if (pt->left != NULL)
+			        pt->left->parent = pt;
+
+			    pt_left->parent = pt->parent;
+
+			    if (pt->parent == NULL)
+			        root = pt_left;
+
+			    else if (pt == pt->parent->left)
+			        pt->parent->left = pt_left;
+
+			    else
+			        pt->parent->right = pt_left;
+
+			    pt_left->right = pt;
+			    pt->parent = pt_left;
+			}
+
+
+/*
 	void FixViolation(TreeNode<x>* node)
 	{
     TreeNode<x>* nodeParent = nullptr;
@@ -719,10 +846,10 @@ private:
 
 	    leftPointer -> right = point;
 	    point -> parent = leftPointer;
-	}
+	}*/
 
 
-	//REcursivly prints pre order
+	//Recursivly prints pre order
 	void PreOrderHelper(const TreeNode<x>* subRoot)
 	{
 		if(subRoot != nullptr)
