@@ -158,6 +158,7 @@ public:
 	    root -> color = BLACK;
 	}
 
+
 	void RotateLeft(TreeNode<x>* &point)
 	{
 		TreeNode<x>* rightPointer = point -> right;
