@@ -16,6 +16,7 @@ class RBtree
 public:
 	RBtree()
 	{
+		cout << "TEST\n";
 		root = nullptr;
 		numNodes = 0;
 	}
