@@ -23,67 +23,27 @@ template <class x>
 class TreeNode
 {
 public:
-
-	TreeNode()
+	bool isOnLeft()
 	{
-		left = nullptr;
-		right = nullptr;
-		parent = nullptr;
-		color = RED;
+		return this == parent->left;
 	}
 
-	TreeNode(x newKey)
-	{
-		key = newKey;
-		left = nullptr;
-		right = nullptr;
-		parent = nullptr;
-		color = RED;
+
+	void moveDown(TreeNode<x>* nParent) {
+	if (parent != NULL) {
+	if (isOnLeft()) {
+	parent->left = nParent;
+	} else {
+	parent->right = nParent;
+	}
+	}
+	nParent->parent = parent;
+	parent = nParent;
 	}
 
-	bool IsLeftChild()
-	{
-		if(this -> parent != nullptr && this == this -> parent -> left)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	//This method swaps the places of two nodes.
-	//pointer to child node pointer is fixed in the calling method, either RotateLeft or RotateRight
-	void MoveDown(TreeNode<x>* otherNode)
-	{
-		//Only reset parent pointer if not dealing with root
-		if (this.parent != NULL)
-		{
-			if (IsLeftChild())
-			{
-				this.parent -> left = otherNode;
-			}
-			else
-			{
-				this.parent -> right = otherNode;
-			}
-		}
-		otherNode -> parent = this.parent;
-		this.parent = otherNode;
-	}
-
-	bool HasRedChild()
-	{
-		if((left != nullptr && left -> color == RED) || (right != nullptr && right -> color == RED))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-
+	bool hasRedChild() {
+	return (left != NULL and left->color == RED) or
+	   (right != NULL and right->color == RED);
 	}
 
 	x key;
