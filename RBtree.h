@@ -90,135 +90,11 @@ public:
 			subRoot = nullptr;
 		}
 	}
-	void FixViolation(TreeNode<x>* &root, TreeNode<x>* &node)
-	{
-	    TreeNode<x>* nodeParent = nullptr;
-	    TreeNode<x>* nodeGrandParent = nullptr;
-
-	    while ((node != root) && (node -> color != BLACK) &&
-	           (node -> parent -> color == RED))
-	    {
-	    	nodeParent = node -> parent;
-	        nodeGrandParent = node -> parent -> parent;
-
-	        if (nodeParent == nodeGrandParent -> left)
-	        {
-
-	            TreeNode<x>* nodeAunt = nodeGrandParent -> right;
-
-	            if (nodeAunt != NULL && nodeAunt -> color == RED)
-	            {
-	                nodeGrandParent -> color = RED;
-	                nodeParent -> color = BLACK;
-	                nodeAunt -> color = BLACK;
-	                node = nodeGrandParent;
-	            }
-
-	            else
-	            {
-	            	if (node == nodeParent -> right)
-	                {
-	                    RotateLeft(nodeParent);
-	                    node = nodeParent;
-	                    nodeParent = node -> parent;
-	                }
-
-	                RotateRight(nodeGrandParent);
-	                ExchangeColors(nodeParent, nodeGrandParent);
-	                node = nodeParent;
-	            }
-	        }
-	        else
-	        {
-	            TreeNode<x>* uncle_pt = nodeGrandParent -> left;
-
-	            if ((uncle_pt != NULL) && (uncle_pt -> color == RED))
-	            {
-	                nodeGrandParent -> color = RED;
-	                nodeParent -> color = BLACK;
-	                uncle_pt -> color = BLACK;
-	                node = nodeGrandParent;
-	            }
-	            else
-	            {
-	                if (node == nodeParent -> left)
-	                {
-	                    RotateRight(nodeParent);
-	                    node = nodeParent;
-	                    nodeParent = node -> parent;
-	                }
-
-	                RotateLeft(nodeGrandParent);
-	                ExchangeColors(nodeParent, nodeGrandParent);
-	                node = nodeParent;
-	            }
-	        }
-	    }
-
-	    root -> color = BLACK;
-	}
 
 
-	void RotateLeft(TreeNode<x>* &point)
-	{
-		TreeNode<x>* rightPointer = point -> right;
-
-	    point -> right = rightPointer -> left;
-
-			if(point -> left != NULL)
-			{
-					point -> left -> parent = point;
-			}
-
-	    rightPointer -> parent = point -> parent;
-
-	    if(point -> parent == NULL)
-			{
-	        root = rightPointer;
-			}
-	    else if(point == point -> parent -> left)
-			{
-	        point -> parent -> left = rightPointer;
-			}
-	    else
-			{
-	        point -> parent -> right = rightPointer;
-			}
-
-	    rightPointer -> left = point;
-	    point -> parent = rightPointer;
-	}
-
-	void RotateRight(TreeNode<x>* &point)
-	{
-		TreeNode<x>* leftPointer = point -> left;
-
-	    point -> left = leftPointer -> right;
-
-			if(point -> right != NULL)
-			{
-					point -> right -> parent = point;
-			}
-
-	    leftPointer -> parent = point -> parent;
-
-	    if(point -> parent == NULL)
-			{
-	        root = leftPointer;
-			}
-	    else if(point == point -> parent -> left)
-			{
-	        point -> parent -> left = leftPointer;
-			}
-	    else
-			{
-	        point -> parent -> right = leftPointer;
-			}
-
-	    leftPointer -> right = point;
-	    point -> parent = leftPointer;
-	}
-
+	/****************
+	 * Core Methods *
+	 ****************/
 	// Function to insert a new node with given value
 	void Insert(const int &newValue)
 	{
@@ -241,326 +117,27 @@ public:
     // fix Red Black Tree violations
     FixViolation(root, node);
 	}
-
-	TreeNode<x>* InsertRecursive(TreeNode<x>* subroot, TreeNode<x>* newNode)
+	void Delete(x value)
 	{
-		if(subroot == nullptr)
+		if(IsEmpty())
 		{
-			return newNode;
+			cout << "Sorry, nothing to delete, tree is empty.\n\n";
+			return;
 		}
 
-		if(newNode -> key < subroot -> key)
+		//Finding value in tree
+		TreeNode<x>* deleteToNode = SearchNode(value);
+
+		//Returning if not found on tree
+		if(deleteToNode == nullptr)
 		{
-			subroot -> left = InsertRecursive(subroot -> left, newNode);
-			subroot -> left -> parent = subroot;
-		}
-		else if(newNode -> key > subroot -> key)
-		{
-			subroot -> right = InsertRecursive(subroot -> right, newNode);
-			subroot -> right -> parent = subroot;
-		}
-		else
-		{
-			return nullptr;
+			cout << "Sorry, that value was not found in the tree and could not be deleted.\n\n";
+			return;
 		}
 
-		return subroot;
+		//Delteting node if found
+		DeleteNode(deleteToNode);
 	}
-
-
-	// deletes the given node
-	  void deleteNode(TreeNode<x>* v) {
-	    TreeNode<x>* u = BSTreplace(v);
-
-	    // True when u and v are both black
-	    bool uvBlack = ((u == NULL or u -> color == BLACK) and (v -> color == BLACK));
-	    TreeNode<x>* parent = v -> parent;
-
-	    if (u == NULL) {
-	      // u is NULL therefore v is leaf
-	      if (v == root) {
-	        // v is root, making root null
-	        root = NULL;
-	      } else {
-	        if (uvBlack) {
-	          // u and v both black
-	          // v is leaf, fix double black at v
-	          fixDoubleBlack(v);
-	        } else {
-	          // u or v is red
-	          if (GetSibling(v) != NULL)
-	            // sibling is not null, make it red"
-	            GetSibling(v) -> color = RED;
-	        }
-
-	        // delete v from the tree
-	        if (v -> IsOnLeft()) {
-	          parent -> left = NULL;
-	        } else {
-	          parent -> right = NULL;
-	        }
-	      }
-	      delete v;
-	      return;
-	    }
-
-	    if (v -> left == NULL or v -> right == NULL) {
-	      // v has 1 child
-	      if (v == root) {
-	        // v is root, assign the value of u to v, and delete u
-	        v -> key = u -> key;
-	        v -> left = v -> right = NULL;
-	        delete u;
-	      } else {
-	        // Detach v from tree and move u up
-	        if (v -> IsOnLeft()) {
-	          parent -> left = u;
-	        } else {
-	          parent -> right = u;
-	        }
-	        delete v;
-	        u -> parent = parent;
-	        if (uvBlack) {
-	          // u and v both black, fix double black at u
-	          fixDoubleBlack(u);
-	        } else {
-	          // u or v red, color u black
-	          u -> color = BLACK;
-	        }
-	      }
-	      return;
-	    }
-
-	    // v has 2 children, swap values with successor and recurse
-	    swapValues(u, v);
-	    deleteNode(u);
-	  }
-
-	  void fixDoubleBlack(TreeNode<x>* xNode) {
-	    if (xNode == root)
-	      // Reached root
-	      return;
-
-	    TreeNode<x>* sibling = GetSibling(xNode), *parent = xNode -> parent;
-	    if (sibling == NULL) {
-	      // No sibiling, double black pushed up
-	      fixDoubleBlack(parent);
-	    } else {
-	      if (sibling -> color == RED) {
-	        // Sibling red
-	        parent -> color = RED;
-	        sibling -> color = BLACK;
-	        if (sibling -> IsOnLeft()) {
-	          // left case
-	          rightRotate(parent);
-	        } else {
-	          // right case
-	          leftRotate(parent);
-	        }
-	        fixDoubleBlack(xNode);
-	      } else {
-	        // Sibling black
-	        if (sibling -> HasRedChild()) {
-	          // at least 1 red children
-	          if (sibling -> left != NULL and sibling -> left -> color == RED) {
-	            if (sibling -> IsOnLeft())
-							{
-	              // left left
-	              sibling -> left -> color = sibling -> color;
-	              sibling -> color = parent -> color;
-	              rightRotate(parent);
-	            } else {
-	              // right left
-	              sibling -> left -> color = parent -> color;
-	              rightRotate(sibling);
-	              leftRotate(parent);
-	            }
-	          } else {
-	            if (sibling -> IsOnLeft())
-							{
-	              // left right
-	              sibling -> right -> color = parent -> color;
-	              leftRotate(sibling);
-	              rightRotate(parent);
-	            } else {
-	              // right right
-	              sibling -> right -> color = sibling -> color;
-	              sibling -> color = parent -> color;
-	              leftRotate(parent);
-	            }
-	          }
-	          parent -> color = BLACK;
-	        } else {
-	          // 2 black children
-	          sibling -> color = RED;
-	          if (parent -> color == BLACK)
-	            fixDoubleBlack(parent);
-	          else
-	            parent -> color = BLACK;
-	        }
-	      }
-	    }
-	  }
-
-		void swapValues(TreeNode<x>* u, TreeNode<x>* v) {
-		    x temp;
-		    temp = u -> key;
-		    u -> key = v -> key;
-		    v -> key = temp;
-		  }
-		TreeNode<x>* BSTreplace(TreeNode<x>* xNode)
-		{
-			// when node have 2 children
-			if (xNode -> left != NULL and xNode -> right != NULL)
-			return successor(xNode -> right);
-
-			// when leaf
-			if (xNode -> left == NULL and xNode -> right == NULL)
-			return NULL;
-
-			// when single child
-			if (xNode -> left != NULL)
-			return xNode -> left;
-			else
-			return xNode -> right;
-		}
-
-		TreeNode<x>* successor(TreeNode<x>* xNode) {
-		    TreeNode<x>* temp = xNode;
-
-		    while (temp -> left != NULL)
-		      temp = temp -> left;
-
-		    return temp;
-		  }
-
-
-
-			// left rotates the given node
-			  void leftRotate(TreeNode<x>* xNode) {
-			    // new parent will be node's right child
-			    TreeNode<x>* nParent = xNode -> right;
-
-			    // update root if current node is root
-			    if (xNode == root)
-			      root = nParent;
-
-			    xNode -> MoveDown(nParent);
-
-			    // connect x with new parent's left element
-			    xNode -> right = nParent -> left;
-			    // connect new parent's left element with node
-			    // if it is not null
-			    if (nParent -> left != NULL)
-			      nParent -> left -> parent = xNode;
-
-			    // connect new parent with x
-			    nParent -> left = xNode;
-			  }
-
-			  void rightRotate(TreeNode<x>* xNode) {
-			    // new parent will be node's left child
-			    TreeNode<x>* nParent = xNode -> left;
-
-			    // update root if current node is root
-			    if (xNode == root)
-			      root = nParent;
-
-			    xNode -> MoveDown(nParent);
-
-			    // connect x with new parent's right element
-			    xNode -> left = nParent -> right;
-			    // connect new parent's right element with node
-			    // if it is not null
-			    if (nParent -> right != NULL)
-			      nParent -> right -> parent = xNode;
-
-			    // connect new parent with x
-			    nParent -> right = xNode;
-			  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		void Delete(x value)
-		{
-			if(IsEmpty())
-			{
-				cout << "Sorry, nothing to delete, tree is empty.\n\n";
-				return;
-			}
-
-			//Finding value in tree
-			TreeNode<x>* deleteToNode = SearchNode(value);
-
-			//Returning if not found on tree
-			if(deleteToNode == nullptr)
-			{
-				cout << "Sorry, that value was not found in the tree and could not be deleted.\n\n";
-				return;
-			}
-
-			//Delteting node if found
-			//DeleteHelper(deleteNode);
-			deleteNode(deleteToNode);
-		}
-
-
-
-
-
-
-
-	void TransplantNodes(TreeNode<x>* deleteNode, TreeNode<x>* replacementNode)
-	{
-
-		if(deleteNode -> parent == nullptr)
-		{
-			root = replacementNode;
-		}
-		else if(deleteNode -> IsOnLeft())
-		{
-			deleteNode -> parent -> left = replacementNode;
-		}
-		else
-		{
-			deleteNode -> parent -> right = replacementNode;
-		}
-
-		//If new node is null (we are deleting a leaf node)
-		if(replacementNode != nullptr)
-		{
-			replacementNode -> parent = deleteNode -> parent;
-		}
-
-	}
-
-
-
-
-
-
-
 	TreeNode<x>* SearchNode(x value)
   {
     if(IsEmpty())
@@ -627,23 +204,6 @@ public:
 			return false;
 		}
 	}
-
-
-
-
-	TreeNode<x>* Successor(TreeNode<x>* node)
-	{
-	  TreeNode<x>* temp = node;
-
-		while (temp -> left != NULL)
-		{
-		  temp = temp -> left;
-		}
-
-		return temp;
-	}
-
-
 
 	/*********************
 	 * TRAVERSAL METHODS *
@@ -779,6 +339,33 @@ private:
 		}
 	}
 
+
+
+
+
+	void TransplantNodes(TreeNode<x>* deleteNode, TreeNode<x>* replacementNode)
+	{
+
+		if(deleteNode -> parent == nullptr)
+		{
+			root = replacementNode;
+		}
+		else if(deleteNode -> IsOnLeft())
+		{
+			deleteNode -> parent -> left = replacementNode;
+		}
+		else
+		{
+			deleteNode -> parent -> right = replacementNode;
+		}
+
+		//If new node is null (we are deleting a leaf node)
+		if(replacementNode != nullptr)
+		{
+			replacementNode -> parent = deleteNode -> parent;
+		}
+
+	}
 	TreeNode<x>* GetSibling(TreeNode<x>* node)
 	{
 		if(node -> IsOnLeft())
@@ -789,6 +376,32 @@ private:
 		{
 			return node -> parent -> left;
 		}
+	}
+
+
+	TreeNode<x>* InsertRecursive(TreeNode<x>* subroot, TreeNode<x>* newNode)
+	{
+		if(subroot == nullptr)
+		{
+			return newNode;
+		}
+
+		if(newNode -> key < subroot -> key)
+		{
+			subroot -> left = InsertRecursive(subroot -> left, newNode);
+			subroot -> left -> parent = subroot;
+		}
+		else if(newNode -> key > subroot -> key)
+		{
+			subroot -> right = InsertRecursive(subroot -> right, newNode);
+			subroot -> right -> parent = subroot;
+		}
+		else
+		{
+			return nullptr;
+		}
+
+		return subroot;
 	}
 
 //**********************************************************************************************************8
@@ -855,6 +468,362 @@ private:
 			}//END else of if(aunt != NULL && aunt -> color == RED)
 		}//END if (parent -> color != BLACK)
 	}
+
+
+	void FixViolation(TreeNode<x>* &root, TreeNode<x>* &node)
+	{
+	    TreeNode<x>* nodeParent = nullptr;
+	    TreeNode<x>* nodeGrandParent = nullptr;
+
+	    while ((node != root) && (node -> color != BLACK) &&
+	           (node -> parent -> color == RED))
+	    {
+	    	nodeParent = node -> parent;
+	        nodeGrandParent = node -> parent -> parent;
+
+	        if (nodeParent == nodeGrandParent -> left)
+	        {
+
+	            TreeNode<x>* nodeAunt = nodeGrandParent -> right;
+
+	            if (nodeAunt != NULL && nodeAunt -> color == RED)
+	            {
+	                nodeGrandParent -> color = RED;
+	                nodeParent -> color = BLACK;
+	                nodeAunt -> color = BLACK;
+	                node = nodeGrandParent;
+	            }
+
+	            else
+	            {
+	            	if (node == nodeParent -> right)
+	                {
+	                    RotateLeft(nodeParent);
+	                    node = nodeParent;
+	                    nodeParent = node -> parent;
+	                }
+
+	                RotateRight(nodeGrandParent);
+	                ExchangeColors(nodeParent, nodeGrandParent);
+	                node = nodeParent;
+	            }
+	        }
+	        else
+	        {
+	            TreeNode<x>* uncle_pt = nodeGrandParent -> left;
+
+	            if ((uncle_pt != NULL) && (uncle_pt -> color == RED))
+	            {
+	                nodeGrandParent -> color = RED;
+	                nodeParent -> color = BLACK;
+	                uncle_pt -> color = BLACK;
+	                node = nodeGrandParent;
+	            }
+	            else
+	            {
+	                if (node == nodeParent -> left)
+	                {
+	                    RotateRight(nodeParent);
+	                    node = nodeParent;
+	                    nodeParent = node -> parent;
+	                }
+
+	                RotateLeft(nodeGrandParent);
+	                ExchangeColors(nodeParent, nodeGrandParent);
+	                node = nodeParent;
+	            }
+	        }
+	    }
+
+	    root -> color = BLACK;
+	}
+
+
+
+	TreeNode<x>* Successor(TreeNode<x>* node)
+	{
+	  TreeNode<x>* temp = node;
+
+		while (temp -> left != NULL)
+		{
+		  temp = temp -> left;
+		}
+
+		return temp;
+	}
+	// deletes the given node
+	void DeleteNode(TreeNode<x>* v) {
+		TreeNode<x>* u = BSTreplace(v);
+
+		// True when u and v are both black
+		bool uvBlack = ((u == NULL || u -> color == BLACK) && (v -> color == BLACK));
+		TreeNode<x>* parent = v -> parent;
+
+		if (u == NULL) {
+			// u is NULL therefore v is leaf
+			if (v == root) {
+				// v is root, making root null
+				root = NULL;
+			} else {
+				if (uvBlack) {
+					// u and v both black
+					// v is leaf, fix double black at v
+					FixDoubleBlack(v);
+				} else {
+					// u or v is red
+					if (GetSibling(v) != NULL)
+						// sibling is not null, make it red"
+						GetSibling(v) -> color = RED;
+				}
+
+				// delete v from the tree
+				if (v -> IsOnLeft()) {
+					parent -> left = NULL;
+				} else {
+					parent -> right = NULL;
+				}
+			}
+			delete v;
+			return;
+		}
+
+		if (v -> left == NULL || v -> right == NULL) {
+			// v has 1 child
+			if (v == root) {
+				// v is root, assign the value of u to v, and delete u
+				v -> key = u -> key;
+				v -> left = v -> right = NULL;
+				delete u;
+			} else {
+				// Detach v from tree and move u up
+				if (v -> IsOnLeft()) {
+					parent -> left = u;
+				} else {
+					parent -> right = u;
+				}
+				delete v;
+				u -> parent = parent;
+				if (uvBlack) {
+					// u and v both black, fix double black at u
+					FixDoubleBlack(u);
+				} else {
+					// u or v red, color u black
+					u -> color = BLACK;
+				}
+			}
+			return;
+		}
+
+		// v has 2 children, swap values with successor and recurse
+		swapValues(u, v);
+		DeleteNode(u);
+	}
+
+	void FixDoubleBlack(TreeNode<x>* xNode) {
+		if (xNode == root)
+			// Reached root
+			return;
+
+		TreeNode<x>* sibling = GetSibling(xNode), *parent = xNode -> parent;
+		if (sibling == NULL) {
+			// No sibiling, double black pushed up
+			FixDoubleBlack(parent);
+		} else {
+			if (sibling -> color == RED) {
+				// Sibling red
+				parent -> color = RED;
+				sibling -> color = BLACK;
+				if (sibling -> IsOnLeft()) {
+					// left case
+					rightRotate(parent);
+				} else {
+					// right case
+					leftRotate(parent);
+				}
+				FixDoubleBlack(xNode);
+			} else {
+				// Sibling black
+				if (sibling -> HasRedChild()) {
+					// at least 1 red children
+					if (sibling -> left != NULL && sibling -> left -> color == RED) {
+						if (sibling -> IsOnLeft())
+						{
+							// left left
+							sibling -> left -> color = sibling -> color;
+							sibling -> color = parent -> color;
+							rightRotate(parent);
+						} else {
+							// right left
+							sibling -> left -> color = parent -> color;
+							rightRotate(sibling);
+							leftRotate(parent);
+						}
+					} else {
+						if (sibling -> IsOnLeft())
+						{
+							// left right
+							sibling -> right -> color = parent -> color;
+							leftRotate(sibling);
+							rightRotate(parent);
+						} else {
+							// right right
+							sibling -> right -> color = sibling -> color;
+							sibling -> color = parent -> color;
+							leftRotate(parent);
+						}
+					}
+					parent -> color = BLACK;
+				} else {
+					// 2 black children
+					sibling -> color = RED;
+					if (parent -> color == BLACK)
+						FixDoubleBlack(parent);
+					else
+						parent -> color = BLACK;
+				}
+			}
+		}
+	}
+
+	void swapValues(TreeNode<x>* u, TreeNode<x>* v) {
+			x temp;
+			temp = u -> key;
+			u -> key = v -> key;
+			v -> key = temp;
+		}
+	TreeNode<x>* BSTreplace(TreeNode<x>* xNode)
+	{
+		// when node have 2 children
+		if (xNode -> left != NULL && xNode -> right != NULL)
+		return successor(xNode -> right);
+
+		// when leaf
+		if (xNode -> left == NULL && xNode -> right == NULL)
+		return NULL;
+
+		// when single child
+		if (xNode -> left != NULL)
+		return xNode -> left;
+		else
+		return xNode -> right;
+	}
+
+	TreeNode<x>* successor(TreeNode<x>* xNode) {
+			TreeNode<x>* temp = xNode;
+
+			while (temp -> left != NULL)
+				temp = temp -> left;
+
+			return temp;
+		}
+
+
+
+	// left rotates the given node
+	void leftRotate(TreeNode<x>* xNode) {
+		// new parent will be node's right child
+		TreeNode<x>* nParent = xNode -> right;
+
+		// update root if current node is root
+		if (xNode == root)
+			root = nParent;
+
+		xNode -> MoveDown(nParent);
+
+		// connect x with new parent's left element
+		xNode -> right = nParent -> left;
+		// connect new parent's left element with node
+		// if it is not null
+		if (nParent -> left != NULL)
+			nParent -> left -> parent = xNode;
+
+		// connect new parent with x
+		nParent -> left = xNode;
+	}
+
+	void rightRotate(TreeNode<x>* xNode) {
+					// new parent will be node's left child
+					TreeNode<x>* nParent = xNode -> left;
+
+					// update root if current node is root
+					if (xNode == root)
+						root = nParent;
+
+					xNode -> MoveDown(nParent);
+
+					// connect x with new parent's right element
+					xNode -> left = nParent -> right;
+					// connect new parent's right element with node
+					// if it is not null
+					if (nParent -> right != NULL)
+						nParent -> right -> parent = xNode;
+
+					// connect new parent with x
+					nParent -> right = xNode;
+				}
+
+
+
+	void RotateLeft(TreeNode<x>* &point)
+	{
+		TreeNode<x>* rightPointer = point -> right;
+
+	    point -> right = rightPointer -> left;
+
+			if(point -> left != NULL)
+			{
+					point -> left -> parent = point;
+			}
+
+	    rightPointer -> parent = point -> parent;
+
+	    if(point -> parent == NULL)
+			{
+	        root = rightPointer;
+			}
+	    else if(point == point -> parent -> left)
+			{
+	        point -> parent -> left = rightPointer;
+			}
+	    else
+			{
+	        point -> parent -> right = rightPointer;
+			}
+
+	    rightPointer -> left = point;
+	    point -> parent = rightPointer;
+	}
+
+	void RotateRight(TreeNode<x>* &point)
+	{
+		TreeNode<x>* leftPointer = point -> left;
+
+	    point -> left = leftPointer -> right;
+
+			if(point -> right != NULL)
+			{
+					point -> right -> parent = point;
+			}
+
+	    leftPointer -> parent = point -> parent;
+
+	    if(point -> parent == NULL)
+			{
+	        root = leftPointer;
+			}
+	    else if(point == point -> parent -> left)
+			{
+	        point -> parent -> left = leftPointer;
+			}
+	    else
+			{
+	        point -> parent -> right = leftPointer;
+			}
+
+	    leftPointer -> right = point;
+	    point -> parent = leftPointer;
+	}
+
 
 	TreeNode<x>* SingleRightRotation(TreeNode<x>* temp)
 	{
