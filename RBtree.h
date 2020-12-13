@@ -138,7 +138,10 @@ public:
 			throw "\n*Tree Empty: No Max Value";
 		}
 
-		TreeNode<x> *temp = root;
+
+	void RotateLeft(TreeNode<x>* &point)
+	{
+		TreeNode<x>* rightPointer = point -> right;
 
 		while(temp -> right != nullptr)
 		{
