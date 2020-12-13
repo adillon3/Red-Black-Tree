@@ -73,7 +73,7 @@ public:
 
 		TreeNode<x>* node = CreateNewNode(newValue);
 
-    // Do a normal BST insert and tell user
+    //Recursivly inserting node and telling user its been added
     root = InsertRecursive(root, node);
   	cout << "Adding " << newValue << " to the Tree\n";
 
@@ -250,6 +250,7 @@ private:
 	 *******************/
 	TreeNode<x>* InsertRecursive(TreeNode<x>* subroot, TreeNode<x>* newNode)
 	{
+		//reached apporpriate leave of the tree
 		if(subroot == nullptr)
 		{
 			return newNode;

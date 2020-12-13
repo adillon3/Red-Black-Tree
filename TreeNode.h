@@ -35,21 +35,24 @@ public:
 		}
 	}
 
-	void MoveDown(TreeNode<x>* node)
+	//This method swaps the places of two nodes.
+	//pointer to child node pointer is fixed in the calling method, either RotateLeft or RotateRight
+	void MoveDown(TreeNode<x>* otherNode)
 	{
-		if (parent != NULL)
+		//Only reset parent pointer if not dealing with root
+		if (this.parent != NULL)
 		{
 			if (IsLeftChild())
 			{
-				parent -> left = node;
+				this.parent -> left = otherNode;
 			}
 			else
 			{
-				parent -> right = node;
+				this.parent -> right = otherNode;
 			}
 		}
-		node -> parent = parent;
-		parent = node;
+		otherNode -> parent = this.parent;
+		this.parent = otherNode;
 	}
 
 	bool HasRedChild()
