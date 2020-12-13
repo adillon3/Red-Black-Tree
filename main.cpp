@@ -5,12 +5,10 @@
  * Assignment Extra Credit
  *******************************/
 
-//#include "RBtree.h"
 #include "RBDatabase.h"
+
 int main()
 {
-	//RBtree<int> myTree;
-
 	RBDatabase myDB;
 
 	myDB.RunDatabase();
