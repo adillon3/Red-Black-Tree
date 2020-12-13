@@ -938,36 +938,7 @@ private:
 
 		return temp;
 	}
-	TreeNode<x>* DoubleLeftRotation(TreeNode<x>* temp)
-	{
-		TreeNode<x>* temp2 = temp -> left;
-		TreeNode<x>* temp3 = temp2 -> right;
 
-		temp2 -> right = temp3 -> left;
-
-		temp -> left = temp3;
-
-		temp3 -> left = temp2;
-
-		temp = SingleRightRotation(temp);
-
-		return temp;
-	}
-	TreeNode<x>* DoubleRightRotation(TreeNode<x>* temp)
-	{
-		TreeNode<x>* temp2 = temp -> right;
-		TreeNode<x>* temp3 = temp2 -> left;
-
-		temp2 -> left = temp3 -> right;
-
-		temp -> right = temp3;
-
-		temp3 -> right = temp2;
-
-		temp = SingleLeftRotation(temp);
-
-		return temp;
-	}
 
 	void Recolor(TreeNode<x>* temp)
 	{
