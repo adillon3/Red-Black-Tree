@@ -23,8 +23,6 @@ public:
 	{
 		DeleteSubTree(root);
 	}
-	//copy constructor
-	
 	void DeleteSubTree(TreeNode<x>* subRoot)
 	{
 		if(subRoot != nullptr)
@@ -85,6 +83,7 @@ public:
 		DeleteNode(deleteToNode);
 		--numNodes;
 	}
+	//Returns pointer to the node or nullptr if value is not found in the tree
 	TreeNode<x>* SearchNode(x value)
   {
     if(IsEmpty())
@@ -109,6 +108,14 @@ public:
 	    return current;
     }//END else of if(IsEmpty())
   }
+
+	//Returns the number of nodes in the tree
+	int GetNumNodes()
+	{
+		return numNodes;
+	}
+
+	//Returns the largest value in the tree
 	x  GetMax()
 	{
 		if(IsEmpty())
@@ -124,6 +131,7 @@ public:
 
 		return temp -> key;
 	}
+	//Returns the smallest value in the tree
 	x  GetMin()
 	{
 		if(IsEmpty())
@@ -140,6 +148,7 @@ public:
 
 		return temp -> key;
 	}
+	//Checks if the tree is empty
 	bool IsEmpty()
 	{
 		if(root == nullptr)
@@ -302,11 +311,14 @@ private:
 	 *************************/
 	 TreeNode<x>* InsertRecursive(TreeNode<x>* subroot, TreeNode<x>* newNode)
 	 {
+		 //Correct location to insert has been found
 		 if(subroot == nullptr)
 		 {
 			 return newNode;
 		 }
 
+		 //Moving left if the new node is less than the current subroot and
+		 // right if it is greater than the current subroot
 		 if(newNode -> key < subroot -> key)
 		 {
 			 subroot -> left = InsertRecursive(subroot -> left, newNode);
@@ -317,77 +329,13 @@ private:
 			 subroot -> right = InsertRecursive(subroot -> right, newNode);
 			 subroot -> right -> parent = subroot;
 		 }
+		 //Cannot add two of the same value
 		 else
 		 {
 			 return nullptr;
 		 }
 
 		 return subroot;
-	 }
-
-	//**********************************************************************************************************8
-	 void FixRedRed(TreeNode<x>* node)
-	 {
-			if(node == root)
-			{
-				node -> color = BLACK;
-				return;
-			}
-
-			TreeNode<x>* parent = node -> parent;
-			TreeNode<x>* grandparent = parent -> parent;
-			TreeNode<x>* aunt;
-
-			if(grandparent -> left == parent)
-			{
-			 aunt = grandparent -> right;
-			}
-			else
-			{
-			 aunt = grandparent -> left;
-			}
-
-		 if(parent -> color != BLACK)
-		 {
-			 if(aunt != NULL && aunt -> color == RED)
-			 {
-				 parent -> color = BLACK;
-				 aunt -> color = BLACK;
-				 grandparent -> color = RED;
-				 FixRedRed(grandparent);
-			 }
-			 else
-			 {
-				 if(parent -> parent -> left == parent)
-				 {
-					 if(node -> parent -> left == node)
-					 {
-						 ExchangeColors(parent, grandparent);
-					 }
-					 else
-					 {
-						 RotateLeft(parent);
-						 ExchangeColors(node, grandparent);
-					 }
-
-					 RotateRight(grandparent);
-				 }//END if(parent -> parent -> left == parent)
-				 else
-				 {
-					 if(node -> parent -> left == node)
-					 {
-						 RotateRight(parent);
-						 ExchangeColors(node, grandparent);
-					 }
-					 else
-					 {
-						 ExchangeColors(parent, grandparent);
-					 }//END else of if(node -> parent -> left == node)
-
-					 RotateLeft(grandparent);
-				 }//END else of if(parent -> parent -> left == parent)
-			 }//END else of if(aunt != NULL && aunt -> color == RED)
-		 }//END if(parent -> color != BLACK)
 	 }
 
 	 void FixViolation(TreeNode<x>* &root, TreeNode<x>* &node)
@@ -553,6 +501,7 @@ private:
 		DeleteNode(replacmentNode);
 	}//void DeleteNode(TreeNode<x>* nodeToDelete)
 
+
 	void FixDoubleBlack(TreeNode<x>* xNode)
 	{
 		if(xNode == root)
@@ -648,26 +597,6 @@ private:
 		}//END else of f(sibling == NULL)
 	}//END void FixDoubleBlack(TreeNode<x>* xNode)
 
-
-	TreeNode<x>* GetSibling(TreeNode<x>* node)
-	{
-		if(node -> IsOnLeft())
-		{
-			return node -> parent -> right;
-		}
-		else //right is child
-		{
-			return node -> parent -> left;
-		}
-	}
-
-	void SwapValues(TreeNode<x>* node1, TreeNode<x>* node2)
-	{
-		x temp;
-		temp = node1 -> key;
-		node1 -> key = node2 -> key;
-		node2 -> key = temp;
-	}
 	TreeNode<x>* BSTreplace(TreeNode<x>* xNode)
 	{
 		// when node have 2 children
@@ -691,6 +620,9 @@ private:
 		}
 	}
 
+	//Gets smallest value in the given node's subtree. Used to find the successor
+	// for delete, getting the smallest value that is larger than the node to be
+	// deleted.  The rgiht child of the delete node is passed in to this method
 	TreeNode<x>* Successor(TreeNode<x>* xNode)
 	{
 		TreeNode<x>* temp = xNode;
@@ -703,66 +635,83 @@ private:
 		return temp;
 	}
 
+	/******************
+	 * ROTATE METHODS *
+	 ******************/
+
 	void RotateRight(TreeNode<x>* &point)
 	{
 		TreeNode<x>* leftPointer = point -> left;
 
-	    point -> left = leftPointer -> right;
+			point -> left = leftPointer -> right;
 
 			if(point -> right != NULL)
 			{
 					point -> right -> parent = point;
 			}
 
-	    leftPointer -> parent = point -> parent;
+			leftPointer -> parent = point -> parent;
 
-	    if(point -> parent == NULL)
+			if(point -> parent == NULL)
 			{
-	        root = leftPointer;
+					root = leftPointer;
 			}
-	    else if(point == point -> parent -> left)
+			else if(point == point -> parent -> left)
 			{
-	        point -> parent -> left = leftPointer;
+					point -> parent -> left = leftPointer;
 			}
-	    else
+			else
 			{
-	        point -> parent -> right = leftPointer;
+					point -> parent -> right = leftPointer;
 			}
 
-	    leftPointer -> right = point;
-	    point -> parent = leftPointer;
+			leftPointer -> right = point;
+			point -> parent = leftPointer;
 	}
 
 	void RotateLeft(TreeNode<x>* &point)
 	{
 		TreeNode<x>* rightPointer = point -> right;
 
-	    point -> right = rightPointer -> left;
+			point -> right = rightPointer -> left;
 
 			if(point -> left != NULL)
 			{
 					point -> left -> parent = point;
 			}
 
-	    rightPointer -> parent = point -> parent;
+			rightPointer -> parent = point -> parent;
 
-	    if(point -> parent == NULL)
+			if(point -> parent == NULL)
 			{
-	        root = rightPointer;
+					root = rightPointer;
 			}
-	    else if(point == point -> parent -> left)
+			else if(point == point -> parent -> left)
 			{
-	        point -> parent -> left = rightPointer;
+					point -> parent -> left = rightPointer;
 			}
-	    else
+			else
 			{
-	        point -> parent -> right = rightPointer;
+					point -> parent -> right = rightPointer;
 			}
 
-	    rightPointer -> left = point;
-	    point -> parent = rightPointer;
+			rightPointer -> left = point;
+			point -> parent = rightPointer;
 	}
 
+
+	/********************
+	 * AUXILARY METHODS *
+	 ********************/
+	//Swaps the key values of two nodes, leaving all other data members the same
+	void SwapValues(TreeNode<x>* node1, TreeNode<x>* node2)
+	{
+		x temp;
+		temp = node1 -> key;
+		node1 -> key = node2 -> key;
+		node2 -> key = temp;
+	}
+	//Swaps the colors of two nodes, leaving all other data members the same
 	void ExchangeColors(TreeNode<x>* node1, TreeNode<x>* node2)
 	{
 		Color temp;
@@ -770,6 +719,7 @@ private:
 		node1 -> color = node2 -> color;
 		node2 -> color = temp;
 	}
+	//Switches a nodes color from red to black or from clack to red
 	void Recolor(TreeNode<x>* temp)
 	{
 		if(temp -> color == RED)
@@ -781,7 +731,21 @@ private:
 			temp -> color = RED;
 		}
 	}
-};
+	TreeNode<x>* GetSibling(TreeNode<x>* node)
+	{
+		if(node -> IsOnLeft())
+		{
+			return node -> parent -> right;
+		}
+		else //right is child
+		{
+			return node -> parent -> left;
+		}
+	}
+
+
+
+};//END RBtree class
 
 
 #endif /* RBTREE_H_ */

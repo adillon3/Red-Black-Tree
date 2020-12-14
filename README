@@ -5,6 +5,10 @@
  * Assignment Extra Credit
  *******************************/
 
+Red Black tree does not allow for two nodes with the same value to be entered into the tree
+
+
+
 Help writing insert
  https://www.geeksforgeeks.org/red-black-tree-set-1-introduction-2/
  https://www.geeksforgeeks.org/red-black-tree-set-2-insert/
