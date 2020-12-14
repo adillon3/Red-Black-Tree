@@ -24,62 +24,7 @@ public:
 		DeleteSubTree(root);
 	}
 	//copy constructor
-	RBtree(const RBtree& other)
-	{
-		CopyBinaryTree(root, other.root);
-
-		numNodes = other.numNodes;
-	}
-	void CopyHelper(TreeNode<x>* copiedTreeNode, TreeNode<x>* otherTreeNode)
-	{
-		if(otherTreeNode == NULL)
-		{
-			copiedTreeNode = NULL;
-		}
-		else
-		{
-			copiedTreeNode = new TreeNode<x>;
-			copiedTreeNode -> key = otherTreeNode -> key;
-			CopyHelper(copiedTreeNode -> left, otherTreeNode -> left);
-			CopyHelper(copiedTreeNode -> right, otherTreeNode -> right);
-		}
-	}
-	//move constructor
-	RBtree(RBtree&& other)
-	{
-		root = other.root;
-		other.root = nullptr;
-		numNodes = other.numNodes;
-	}
-	//copy assignment operator
-	RBtree& operator=(const RBtree& other)
-	{
-		if(this != &other)
-		{
-			DeleteSubTree(root);
-
-			CopyHelper(root, other.root);
-			numNodes = other.numNodes;
-		}
-
-		return *this;
-	}
-	//move assignment operator
-	RBtree& operator=(RBtree&& other)
-	{
-		if(this != &other)
-		{
-			DeleteSubTree(root);
-
-			CopyHelper(root, other.root);
-			numNodes = other.numNodes;
-
-			CopyHelper(other.root);
-			other.numNodes = 0;
-		}
-
-		return *this;
-	}
+	
 	void DeleteSubTree(TreeNode<x>* subRoot)
 	{
 		if(subRoot != nullptr)
@@ -116,6 +61,7 @@ public:
 
     // fix Red Black Tree violations
     FixViolation(root, node);
+		numNodes++;
 	}
 	void Delete(x value)
 	{
@@ -137,6 +83,7 @@ public:
 
 		//Delteting node if found
 		DeleteNode(deleteToNode);
+		--numNodes;
 	}
 	TreeNode<x>* SearchNode(x value)
   {
