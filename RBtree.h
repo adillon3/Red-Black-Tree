@@ -58,7 +58,7 @@ public:
     }
 
     // fix Red Black Tree violations
-    FixViolation(root, node);
+    FixInsertViolation(node);
 		numNodes++;
 	}
 	void Delete(x value)
@@ -234,7 +234,7 @@ private:
 	 ****************************/
 	void PreOrderHelper(TreeNode<x>* subRoot)
 	{
-		if(subRoot != NULL)
+		if(subRoot != nullptr)
 		{
 			if(subRoot == root)
 			{
@@ -258,7 +258,7 @@ private:
 	}
 	void PostOrderHelper(TreeNode<x>* subRoot)
 	{
-		if(subRoot != NULL)
+		if(subRoot != nullptr)
 		{
 			PostOrderHelper(subRoot -> left);
 
@@ -282,7 +282,7 @@ private:
 	}
 	void InOrderHelper(TreeNode<x>* subRoot)
 	{
-		if(subRoot != NULL)
+		if(subRoot != nullptr)
 		{
 			InOrderHelper(subRoot -> left);
 
@@ -309,6 +309,7 @@ private:
 	/*************************
 	 * INSERT HELPER METHODS *
 	 *************************/
+	 //Recursivly inserting node to the leave level, just like non balanced BST
 	 TreeNode<x>* InsertRecursive(TreeNode<x>* subroot, TreeNode<x>* newNode)
 	 {
 		 //Correct location to insert has been found
@@ -338,57 +339,69 @@ private:
 		 return subroot;
 	 }
 
-	 void FixViolation(TreeNode<x>* &root, TreeNode<x>* &node)
- 	{
- 	    TreeNode<x>* nodeParent = nullptr;
- 	    TreeNode<x>* nodeGrandParent = nullptr;
+	 //Called by main insret method to fix any violations caused by the most
+	 // recent value inserted (node points to this most recent value)
+	 void FixInsertViolation(TreeNode<x>* node)
+ 	 {
+		  TreeNode<x>* nodeParent = nullptr;
+		  TreeNode<x>* nodeGrandParent = nullptr;
 
+			//Looping until back at root and all violations (baring root must be black) are fixed
  	    while ((node != root) && (node -> color != BLACK) &&
  	           (node -> parent -> color == RED))
  	    {
  	    	nodeParent = node -> parent;
         nodeGrandParent = node -> parent -> parent;
 
-        if(nodeParent == nodeGrandParent -> left)
-        {
+				//Parent is left child, uncle is righgt child
+        if(nodeParent -> IsOnLeft())
+				{
+        	TreeNode<x>* nodeUncle = nodeGrandParent -> right;
 
-        	TreeNode<x>* nodeAunt = nodeGrandParent -> right;
-
-					if(nodeAunt != NULL && nodeAunt -> color == RED)
+					//If uncle is red, "move the black down"
+					// This is done to keep the number of BLACK nodes in each path to each leaf node the same
+					if(nodeUncle != nullptr && nodeUncle -> color == RED)
 					{
+						//Recolor
 						nodeGrandParent -> color = RED;
 						nodeParent -> color = BLACK;
-						nodeAunt -> color = BLACK;
+						nodeUncle -> color = BLACK;
 						node = nodeGrandParent;
-					}//END else of if(nodeAunt != NULL && nodeAunt -> color == RED)
+					}//END else of if(nodeAunt != nullptr && nodeAunt -> color == RED)
 					else
 					{
-						if(node == nodeParent -> right)
+						//If node is a right child
+						if(!(node -> IsOnLeft()))
 						{
 							RotateLeft(nodeParent);
 							node = nodeParent;
 							nodeParent = node -> parent;
-						}
+						}//END if(!(node -> IsOnLeft()))
 
 						RotateRight(nodeGrandParent);
+						//Values/ nodes placment is correct, now changing colors
 						ExchangeColors(nodeParent, nodeGrandParent);
 						node = nodeParent;
-					}//END else of if(nodeAunt != NULL && nodeAunt -> color == RED)
-        }//END if(nodeParent == nodeGrandParent -> left)
-        else
+					}//END else of if(nodeAunt != nullptr && nodeAunt -> color == RED)
+        }//END if (nodeParent -> IsOnLeft())
+				//Parent is right child, uncle is left child
+				else
         {
-            TreeNode<x>* uncle_pt = nodeGrandParent -> left;
+            TreeNode<x>* nodeUncle = nodeGrandParent -> left;
 
-            if((uncle_pt != NULL) && (uncle_pt -> color == RED))
+						//If uncle is red, "move the black down"
+						// This is done to keep the number of BLACK nodes in each path to each leaf node the same
+            if((nodeUncle != nullptr) && (nodeUncle -> color == RED))
             {
                 nodeGrandParent -> color = RED;
                 nodeParent -> color = BLACK;
-                uncle_pt -> color = BLACK;
+                nodeUncle -> color = BLACK;
                 node = nodeGrandParent;
             }
             else
             {
-              if(node == nodeParent -> left)
+							//If node is on left
+              if(node -> IsOnLeft())
               {
                 RotateRight(nodeParent);
                 node = nodeParent;
@@ -396,12 +409,14 @@ private:
               }
 
               RotateLeft(nodeGrandParent);
+							//Values/ nodes placment is correct, now changing colors
               ExchangeColors(nodeParent, nodeGrandParent);
               node = nodeParent;
-            }//END else of if((uncle_pt != NULL) && (uncle_pt -> color == RED))
-        }//END else of if(nodeParent == nodeGrandParent -> left)
+            }//END else of if((uncle_pt != nullptr) && (uncle_pt -> color == RED))
+        }//END else of if(nodeParent -> IsOnLeft())
  	    }//END  while ((node != root) && (node -> color != BLACK) && (node -> parent -> color == RED))
 
+			//Root must always be black
  	    root -> color = BLACK;
  	}
 
@@ -410,66 +425,67 @@ private:
 	 *************************/
 	void DeleteNode(TreeNode<x>* nodeToDelete)
 	{
-		TreeNode<x>* replacmentNode = BSTreplace(nodeToDelete);
+		//Getting node that will replace the nodeToDelete
+		TreeNode<x>* replacmentNode = BSTreplacementNode(nodeToDelete);
 
 		// True when nodeToDelete(dNode) and replacmentNode(RNode) are both black
-		bool dNodeAndRNodeBlack = ((replacmentNode == NULL || replacmentNode -> color == BLACK) && (nodeToDelete -> color == BLACK));
+		bool dNodeAndRNodeBlack = ((replacmentNode == nullptr || replacmentNode -> color == BLACK) && (nodeToDelete -> color == BLACK));
 		TreeNode<x>* parent = nodeToDelete -> parent;
 
-		if(replacmentNode == NULL)
+		// replacmentNode is nullptr therefore nodeToDelete is leaf
+		if(replacmentNode == nullptr)
 		{
-			// replacmentNode is NULL therefore v is leaf
+			// nodeToDelete is root, making root nullptr
 			if(nodeToDelete == root)
 			{
-				// nodeToDelete is root, making root null
-				root = NULL;
+				root = nullptr;
+				//Tree is now empty
 			}
 			else
 			{
 				if(dNodeAndRNodeBlack)
 				{
-					// replacmentNode and nodeToDelete both black
-					// nodeToDelete is leaf, fix double black at nodeToDelete
+					//NodeToDelete is leaf, fix double BLACK at nodeToDelete
 					FixDoubleBlack(nodeToDelete);
 				}
 				else
 				{
-					// u or nodeToDelete is red
-					if(GetSibling(nodeToDelete) != NULL)
+					// replacmentNode or nodeToDelete is RED
+					if(GetSibling(nodeToDelete) != nullptr)
 					{
-						// sibling is not null, make it red"
+						//sibling is not nullptr, make it RED
 						GetSibling(nodeToDelete) -> color = RED;
 					}
 
-				}//END else if(uvBlack)
+				}//END else if(dNodeAndRNodeBlack)
 
 				// delete nodeToDelete from the tree
 				if(nodeToDelete -> IsOnLeft())
 				{
-					parent -> left = NULL;
+					parent -> left = nullptr;
 				}
 				else
 				{
-					parent -> right = NULL;
+					parent -> right = nullptr;
 				}
 			}//END else of if(nodeToDelete == root)
 			delete nodeToDelete;
 			return;
-		}//if(replacmentNode == NULL)
+		}//if(replacmentNode == nullptr)
 
-		if(nodeToDelete -> left == NULL || nodeToDelete -> right == NULL)
+		//if one or two children
+		if(nodeToDelete -> left == nullptr || nodeToDelete -> right == nullptr)
 		{
-			// nodeToDelete has 1 child
 			if(nodeToDelete == root)
 			{
-				// nodeToDelete is root, assign the value of u to nodeToDelete, and delete u
+				//Assigning the value of replacmentNode to nodeToDelete
 				nodeToDelete -> key = replacmentNode -> key;
-				nodeToDelete -> left = nodeToDelete -> right = NULL;
+				nodeToDelete -> left = nodeToDelete -> right = nullptr;
 				delete replacmentNode;
 			}
 			else
 			{
-				// Detach nodeToDelete from tree and move u up
+				//Detach nodeToDelete from tree and move replacmentNode up
 				if(nodeToDelete -> IsOnLeft())
 				{
 					parent -> left = replacmentNode;
@@ -484,35 +500,38 @@ private:
 
 				if(dNodeAndRNodeBlack)
 				{
-					// replacmentNode and nodeToDelete both black, fix double black at u
+					//replacmentNode and nodeToDelete are both black, fix double black at replacmentNode
 					FixDoubleBlack(replacmentNode);
 				}
 				else
 				{
-					// replacmentNode or nodeToDelete red, color u black
+					//Either replacmentNode or nodeToDelete is RED, color replacmentNode BLACK
 					replacmentNode -> color = BLACK;
 				}//END else of if(dNodeAndRNodeBlack)
 			}//END else of if(nodeToDelete == root)
 			return;
-		}//END if(nodeToDelete -> left == NULL || nodeToDelete -> right == NULL)
+		}//END if(nodeToDelete -> left == nullptr || nodeToDelete -> right == nullptr)
 
-		// nodeToDelete has 2 children, swap values with successor and recurse
+		//nodeToDelete has 2 children, swap values with successor and recurse
 		SwapValues(replacmentNode, nodeToDelete);
 		DeleteNode(replacmentNode);
 	}//void DeleteNode(TreeNode<x>* nodeToDelete)
 
-
+	//Converting Double black to regular BLACK, which is caused when deleting a
+	// black node and replacing it with another black node, this messes up the
+	// property of the RB tree that states that every path to a leaf node must
+	// have the sane number of black nodes.  This is because the side on which
+	// the delete occured now has one less BLACK node than the other side
 	void FixDoubleBlack(TreeNode<x>* xNode)
 	{
+		//Reached root: Finished
 		if(xNode == root)
 		{
-			// Reached root
 			return;
 		}
 
-
 		TreeNode<x>* sibling = GetSibling(xNode), *parent = xNode -> parent;
-		if(sibling == NULL)
+		if(sibling == nullptr)
 		{
 			// No sibiling, double black pushed up
 			FixDoubleBlack(parent);
@@ -543,7 +562,7 @@ private:
 				if(sibling -> HasRedChild())
 				{
 					// at least 1 red children
-					if(sibling -> left != NULL && sibling -> left -> color == RED)
+					if(sibling -> left != nullptr && sibling -> left -> color == RED)
 					{
 						if(sibling -> IsOnLeft())
 						{
@@ -574,7 +593,7 @@ private:
 							sibling -> color = parent -> color;
 							RotateLeft(parent);
 						}
-					}//END else of if(sibling -> left != NULL && sibling -> left -> color == RED)
+					}//END else of if(sibling -> left != nullptr && sibling -> left -> color == RED)
 
 					parent -> color = BLACK;
 
@@ -594,23 +613,25 @@ private:
 					}//END else of if(parent -> color == BLACK)
 				}//END else of if(sibling -> HasRedChild())
 			}//END else of if(sibling -> color == RED)
-		}//END else of f(sibling == NULL)
+		}//END else of f(sibling == nullptr)
 	}//END void FixDoubleBlack(TreeNode<x>* xNode)
 
-	TreeNode<x>* BSTreplace(TreeNode<x>* xNode)
+	//Finding the approprate replacment node when deleting
+	TreeNode<x>* BSTreplacementNode(TreeNode<x>* xNode)
 	{
-		// when node have 2 children
-		if(xNode -> left != NULL && xNode -> right != NULL)
+		//When node to delete has 2 children, the sucessor must be found
+		// (the smallest value that is larger than the node to be deleted)
+		if(xNode -> left != nullptr && xNode -> right != nullptr)
 		{
 			return Successor(xNode -> right);
 		}
-		// when leaf
-		if(xNode -> left == NULL && xNode -> right == NULL)
+		//When node to delete is a leaf, there is no node to replace it, return nullptr
+		if(xNode -> left == nullptr && xNode -> right == nullptr)
 		{
-			return NULL;
+			return nullptr;
 		}
-		// when single child
-		if(xNode -> left != NULL)
+		//When node to delete only has aone child, return that
+		if(xNode -> left != nullptr)
 		{
 			return xNode -> left;
 		}
@@ -627,7 +648,7 @@ private:
 	{
 		TreeNode<x>* temp = xNode;
 
-		while (temp -> left != NULL)
+		while (temp -> left != nullptr)
 		{
 			temp = temp -> left;
 		}
@@ -639,20 +660,22 @@ private:
 	 * ROTATE METHODS *
 	 ******************/
 
+	//Moves a left child "up" and node "down", repositioning pointers
+	// appropriatly to A) not lose data and B) keep the values in order
 	void RotateRight(TreeNode<x>* &point)
 	{
 		TreeNode<x>* leftPointer = point -> left;
 
 			point -> left = leftPointer -> right;
 
-			if(point -> right != NULL)
+			if(point -> right != nullptr)
 			{
 					point -> right -> parent = point;
 			}
 
 			leftPointer -> parent = point -> parent;
 
-			if(point -> parent == NULL)
+			if(point -> parent == nullptr)
 			{
 					root = leftPointer;
 			}
@@ -669,20 +692,22 @@ private:
 			point -> parent = leftPointer;
 	}
 
+ //Moves a right child "up" and node "down", repositioning pointers
+ // appropriatly to A) not lose data and B) keep the values in order
 	void RotateLeft(TreeNode<x>* &point)
 	{
 		TreeNode<x>* rightPointer = point -> right;
 
 			point -> right = rightPointer -> left;
 
-			if(point -> left != NULL)
+			if(point -> left != nullptr)
 			{
 					point -> left -> parent = point;
 			}
 
 			rightPointer -> parent = point -> parent;
 
-			if(point -> parent == NULL)
+			if(point -> parent == nullptr)
 			{
 					root = rightPointer;
 			}
